@@ -8,6 +8,7 @@ function createFakerUsers (limit) {
   for (let i = 0; i < limit; i++) {
     users.push({
       name: faker.person.fullName(),
+      email: faker.internet.email(),
       sex: faker.person.sex(),
       job_area: faker.person.jobArea()
     });
@@ -23,6 +24,42 @@ router.get('/', (req, res) => {
   const users = createFakerUsers(limit);
   res.json(users);
 })
+
+router.get('/:id', (req, res) => {
+  const id = req.params;
+  res.json({
+    message: 'user will be found',
+    id
+  });
+})
+
+router.post('/', (req, res) => {
+  const body = req.body;
+  res.json({
+    message: 'Created',
+    data: body
+  })
+})
+
+router.patch('/:id', (req, res) => {
+  const id = req.params
+  const body = req.body;
+  res.json({
+    message: 'Updated',
+    data: {...id,
+      ...body
+    }
+  })
+})
+
+router.delete('/:id', (req, res) => {
+  const id = req.params;
+  res.json({
+    message: 'Deleted',
+    id
+  })
+})
+
 
 
 module.exports = router

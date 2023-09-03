@@ -1,65 +1,51 @@
 const express = require("express");
-const { faker } = require('@faker-js/faker');
+const UsersService = require("./../services/users.service")
 
 const router = express.Router();
+const service = new UsersService();
 
-function createFakerUsers (limit) {
-  const users = [];
-  for (let i = 0; i < limit; i++) {
-    users.push({
-      name: faker.person.fullName(),
-      email: faker.internet.email(),
-      sex: faker.person.sex(),
-      job_area: faker.person.jobArea()
-    });
-  }
-  return users
-}
-
-
-// Solicitud enviar products
-router.get('/', (req, res) => {
-  const { size } = req.query;
-  const limit = size || 10
-  const users = createFakerUsers(limit);
+router.get('/', async (req, res) => {
+  // const { size } = req.query;
+  // const limit = size || 10
+  const users = await service.find();
   res.json(users);
 })
 
-router.get('/:id', (req, res) => {
-  const id = req.params;
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  const user = await service.findOne(id);
   res.json({
     message: 'user will be found',
-    id
+    user
   });
 })
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const body = req.body;
+  const newUser = await service.create(body);
   res.json({
     message: 'Created',
-    data: body
+    data: newUser
   })
 })
 
-router.patch('/:id', (req, res) => {
-  const id = req.params
+router.patch('/:id', async (req, res) => {
+  const { id } = req.params;
   const body = req.body;
+  const updateUser = await service.update(id, body)
   res.json({
     message: 'Updated',
-    data: {...id,
-      ...body
-    }
+    updateUser
   })
 })
 
-router.delete('/:id', (req, res) => {
-  const id = req.params;
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  const deleteUser = await service.detele(id);
   res.json({
     message: 'Deleted',
-    id
+    deleteUser
   })
 })
-
-
 
 module.exports = router

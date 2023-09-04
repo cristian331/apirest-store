@@ -56,9 +56,10 @@ class ProductsService {
     const product = this.products.find(item => item.id===id)
 
     //-------------------
-    // if (!product) {
-    //   throw boom.notFound('Product Not Found')
-    // }
+    if (!product) {
+      throw new Error('Product Not Found')
+      // throw boom.notFound('Product Not Found')
+    }
     // if (product.isblock) {
     //   throw boom.conflict('Product is Block for You')
     // }
@@ -82,9 +83,10 @@ class ProductsService {
 
   async delete(id) {
     const i = this.products.findIndex(item => item.id === id);
-    //   if(i === -1) {
-      //     // throw book.notFound('Product Not Found')
-      //   }
+      if(i === -1) {
+        throw new Error('Product Not Found')
+          // throw book.notFound('Product Not Found')
+        }
     const product = this.products.splice(i,1);
     return product
   }

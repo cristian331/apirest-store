@@ -1,14 +1,19 @@
 const express = require("express");
-// const { faker } = require('@faker-js/faker');
+const { logErros, errorHandler, boomErrorHandler } = require("./middleware/error.handler")
 
- const routerApi = require("./routes"); // El archivo index.js se busca en automatico
+const routerApi = require("./routes"); // El archivo index.js se busca en automatico
 
- const app = express();
- const port = 3000;
+const app = express();
+const port = 3000;
 
- app.use(express.json());
+app.use(express.json());
 
- routerApi(app);
+routerApi(app);
+
+//Nota: se deben declarar despues de ejecutar la funcion del router.
+app.use(logErros);
+app.use(boomErrorHandler);
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)

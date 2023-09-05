@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
   res.json(users);
 })
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
     const user = await service.findOne(id);
@@ -20,13 +20,15 @@ router.get('/:id', async (req, res) => {
       user
     });
   } catch (err) {
-    res.json({
-      message: err.message
-    })
+    // res.status(404).json({
+    //   message: err.message
+    // })
+    // ------------------ middleware
+    next(err);
   }
 })
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
   try {
     const body = req.body;
     const newUser = await service.create(body);
@@ -35,13 +37,15 @@ router.post('/', async (req, res) => {
       data: newUser
     })
   } catch (err) {
-    res.json({
-      message: err.message
-    })
+    // res.status(404).json({
+    //   message: err.message
+    // })
+    // ------------------ middleware
+    next(err);
   }
 })
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
     const body = req.body;
@@ -51,13 +55,15 @@ router.patch('/:id', async (req, res) => {
       updateUser
     })
   } catch (err) {
-    res.json({
-      message: err.message
-    })
+    // res.status(404).json({
+    //   message: err.message
+    // })
+    // ------------------ middleware
+    next(err);
   }
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
     const deleteUser = await service.delete(id);
@@ -66,9 +72,11 @@ router.delete('/:id', async (req, res) => {
       deleteUser
     })
   } catch (err) {
-    res.json({
-      message: err.message
-    })
+    // res.status(404).json({
+    //   message: err.message
+    // })
+    // ------------------ middleware
+    next(err);
   }
 })
 

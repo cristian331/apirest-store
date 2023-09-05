@@ -1,5 +1,5 @@
 const { faker }  = require('@faker-js/faker');
-// const boom = require('@hapi/boom');
+const boom = require('@hapi/boom');
 // const getConnection = require('./../libs/postgres');
 // const { models } = require('../libs/sequalize');
 
@@ -18,7 +18,7 @@ class ProductsService {
         name: faker.commerce.productName(),
         price: parseInt(faker.commerce.price()),
         image: faker.image.url(),
-        isblock: faker.datatype.boolean()
+        isblock: faker.datatype.boolean() // EJM logica negocio - como ejercicio para manejo de errores
       });
     }
     // return this.products
@@ -57,12 +57,13 @@ class ProductsService {
 
     //-------------------
     if (!product) {
-      throw new Error('Product Not Found')
-      // throw boom.notFound('Product Not Found')
+      // throw new Error('Product Not Found')
+      throw boom.notFound('Product Not Found')
     }
-    // if (product.isblock) {
-    //   throw boom.conflict('Product is Block for You')
-    // }
+    // Validacion if block
+    if (product.isblock) {
+      throw boom.conflict('Product is block for You')
+    }
     //------------------
     return product
   }
@@ -71,8 +72,8 @@ class ProductsService {
     const i = this.products.findIndex(item => item.id === id)
     const product = this.products[i];
     if(i === -1) {
-      throw new Error('Product Not Found')
-      // throw boom.notFound('Product Not Found')
+      // throw new Error('Product Not Found')
+      throw boom.notFound('Product Not Found')
     }
     this.products[i] = {
       ...product,
@@ -84,8 +85,8 @@ class ProductsService {
   async delete(id) {
     const i = this.products.findIndex(item => item.id === id);
       if(i === -1) {
-        throw new Error('Product Not Found')
-          // throw book.notFound('Product Not Found')
+        // throw new Error('Product Not Found')
+          throw boom.notFound('Product Not Found')
         }
     const product = this.products.splice(i,1);
     return product

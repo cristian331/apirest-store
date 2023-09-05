@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
   res.status(200).json(products);
 })
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   try {
       const { id } = req.params;
       const product = await service.findOne(id);
@@ -21,13 +21,15 @@ router.get('/:id', async (req, res) => {
         ...product
       });
     } catch (err) {
-    res.json({
-      message: err.message
-    })
-  }
-})
+      // res.status(404).json({
+      //   message: err.message
+      // });
+      // ------------------ middleware
+        next(err);
+    }
+  })
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
   try {
     const body = req.body;
     const newProduct = await service.create(body)
@@ -36,13 +38,15 @@ router.post('/', async (req, res) => {
       data: newProduct
     })
   } catch (err) {
-    res.json({
-      message: err.message
-    })
+    // res.status(404).json({
+    //   message: err.message
+    // })
+    // ------------------ middleware
+        next(err);
   }
 })
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', async (req, res, next) => {
   try {
     const { id } = req.params
     const body = req.body;
@@ -52,13 +56,15 @@ router.patch('/:id', async (req, res) => {
       updateProduct
     })
   } catch (err) {
-    res.json({
-      message: err.message
-    })
+    // res.status(404).json({
+    //   message: err.message
+    // })
+    // ------------------ middleware
+        next(err);
   }
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
     const deleteProduct = await service.delete(id)
@@ -67,9 +73,11 @@ router.delete('/:id', async (req, res) => {
       deleteProduct
     })
   } catch (err) {
-    res.json({
-      message: err.message
-    })
+    // res.status(404).json({
+    //   message: err.message
+    // })
+    // ------------------ middleware
+        next(err);
   }
 
 })

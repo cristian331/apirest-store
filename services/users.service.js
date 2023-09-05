@@ -1,5 +1,5 @@
 const { faker }  = require('@faker-js/faker');
-// const boom = require('@hapi/boom')
+const boom = require('@hapi/boom');
 // const pool = require('../libs/postgres.pool');
 // const { models } = require('../libs/sequalize');
 
@@ -26,7 +26,6 @@ class UsersService {
   // return this.products
 
   async create(data) {
-
     //----------------
     // const newUser = await models.User.create(data)
 
@@ -58,14 +57,11 @@ class UsersService {
   async findOne(id) {
 
     // const user = await models.User.findByPk(id);
-    // if(!user) {
-    //   throw boom.notFound('User Not Found')
-    // }
-    // return user
-    // //----------------
+    //----------------
     const user = this.users.find(item => item.id === id)
     if(!user) {
-      throw new Error('User Not Found')
+      // throw new Error('User Not Found')
+      throw boom.notFound('User Not Found')
     }
     return user
   }
@@ -80,7 +76,8 @@ class UsersService {
     const user = this.users[i];
 
     if(i === -1) {
-      throw new Error('User Not Found')
+      // throw new Error('User Not Found')
+      throw boom.notFound('User Not Found')
     }
     this.users[i] = {
       ...user,
@@ -97,7 +94,8 @@ class UsersService {
     // ---------------------
     const i = this.users.findIndex(item => item.id === id);
     if(i === -1) {
-      throw new Error('User Not Found')
+      // throw new Error('User Not Found')
+      throw boom.notFound('User Not Found')
     }
     const user = this.users[i]
     this.users.splice(i,1);

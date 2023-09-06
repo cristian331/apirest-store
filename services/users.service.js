@@ -18,6 +18,8 @@ class UsersService {
       this.users.push({
         id: faker.string.uuid().split('-')[0],
         name: faker.person.fullName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
         sex: faker.person.sex(),
         jobArea: faker.person.jobArea()
       });

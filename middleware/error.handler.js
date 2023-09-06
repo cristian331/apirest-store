@@ -28,6 +28,4 @@ function boomErrorHandler (err, req, res, next) {
 
 }
 
-
-
 module.exports = { logErros, errorHandler, boomErrorHandler }

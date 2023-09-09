@@ -10,17 +10,18 @@ const port = 3000;
 app.use(express.json());
 
 // para registir el acceso solo a ciertos origenes
-const whiteList = ['http://localhost:8080'];
-const option = {
-  origin: (origin, callback) => {
-    if(whiteList.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Acceso no permitido'))
-    }
-  }
-}
-app.use(cors(option));
+// const whiteList = ['http://localhost:8080'];
+// const option = {
+//   origin: (origin, callback) => {
+//     if(whiteList.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Acceso no permitido'))
+//     }
+//   }
+// }
+// app.use(cors(option));
+app.use(cors());
 
 routerApi(app);
 

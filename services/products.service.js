@@ -1,6 +1,6 @@
 const { faker }  = require('@faker-js/faker');
 const boom = require('@hapi/boom');
-// const getConnection = require('./../libs/postgres');
+const pool = require('./../libs/postgres.pool');
 // const { models } = require('../libs/sequalize');
 
 class ProductsService {
@@ -8,6 +8,8 @@ class ProductsService {
   constructor () {
     this.products = [];
     this.generate();
+    this.pool = pool;
+    this.pool.on('error', (err) => console.error(err));
   }
 
   generate() {
@@ -25,18 +27,27 @@ class ProductsService {
   }
 
   async create(data) {
-    const newProduct = {
-      id: faker.string.uuid().split('-')[0],
-      ...data,
-      isblock: faker.datatype.boolean()
-    }
-    this.products.push(newProduct);
-    return newProduct
+    //------------------
+    // const newProduct = {
+    //   id: faker.string.uuid().split('-')[0],
+    //   ...data,
+    //   isblock: faker.datatype.boolean()
+    // }
+    // this.products.push(newProduct);
+    // return newProduct
+    //--------------------
+    const query = `iNSERT INTO products (name, price, image, isblock) VALUES ('${data.name}',${data.price},'${data.image}','${data.isblock}');`;
+    const queryId = 'SELECT id FROM products ORDER BY id DESC LIMIT 1';
+    await this.pool.query(query);
+    const newId = await this.pool.query(queryId);
+    const id = await newId.rows[0].id;
+    const rta = this.findOne(id);
+    return rta;
   }
 
   // async findDB() {
   //   const client = await getConnection();
-  //   const rta = await client.query('SELECT * FROM tasks');
+  //   const rta = await client.query('SELECT * FROM products');
   //   return rta.rows;
   // }
 
@@ -45,27 +56,30 @@ class ProductsService {
     // const rta = await models.Product.findAll();
     // return rta
     // --------------------
-    // const client = await getConnection();
-    // const rta = await client.query('SELECT * FROM tasks');
-    // return rta.rows;
+    const query = 'SELECT * FROM products';
+    const rta = await this.pool.query(query)
+    return rta.rows;
     // --------------------
-    return this.products
+    // return this.products
   }
 
   async findOne(id) {
-    const product = this.products.find(item => item.id===id)
-
+    // const product = this.products.find(item => item.id===id)
+    //--------------------
+    const query = `SELECT * FROM products WHERE id = ${id}`;
+    const product = await this.pool.query(query)
+    // return rta.rows;
     //-------------------
-    if (!product) {
+    if (!product.rows[0]) {
       // throw new Error('Product Not Found')
       throw boom.notFound('Product Not Found')
     }
     // Validacion if block
-    if (product.isblock) {
+    if (product.rows[0].isblock) {
       throw boom.conflict('Product is block for You')
     }
     //------------------
-    return product
+    return product.rows[0]
   }
 
   async update(id, changes) {

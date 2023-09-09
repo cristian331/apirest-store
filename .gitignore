@@ -224,4 +224,9 @@ node_modules
 .editorconfig
 .eslintrc.json
 
+#DataBase
+postgres_data
+consultas_postgres
+postgres.js
+
 # End of https://www.toptal.com/developers/gitignore/api/node,windows,linux,macos

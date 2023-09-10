@@ -68,7 +68,7 @@ class ProductsService {
     //--------------------
     const query = `SELECT * FROM products WHERE id = ${id}`;
     const product = await this.pool.query(query)
-    // return rta.rows;
+    // return product.rows[0];
     //-------------------
     if (!product.rows[0]) {
       // throw new Error('Product Not Found')

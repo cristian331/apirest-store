@@ -1,5 +1,6 @@
 const { faker }  = require('@faker-js/faker');
 const boom = require('@hapi/boom');
+const sequelize = require('./../libs/sequelize');
 
 class CategoriesService {
 
@@ -28,7 +29,12 @@ class CategoriesService {
   }
 
   async find() {
-    return this.categories
+
+    const query = 'SELECT * FROM categories'
+    const [data] = await sequelize.query(query);
+    return data
+    //------------------------
+    // return this.categories
   }
 
   async findOne(id) {

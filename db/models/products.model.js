@@ -1,5 +1,5 @@
 const { DataTypes, Model } = require('sequelize');
-// const {Sequelize} = require('sequelize');
+const {Sequelize} = require('sequelize');
 
 const PRODUCT_TABLE = 'products';
 const ProductSchema = {
@@ -21,13 +21,13 @@ const ProductSchema = {
   image:{
     allowNull: false,
     type:DataTypes.STRING
-  }//,
-  // createdAt:{
-  //   allowNull:false,
-  //   type:DataTypes.DATE,
-  //   field:'create_at',
-  //   defaultValue:Sequelize.NOW
-  // }
+  },
+  createdAt:{
+    // allowNull:false,
+    type:DataTypes.DATE,
+    field:'created_at',
+    defaultValue:Sequelize.NOW
+  }
 };
 
 class Product extends Model{

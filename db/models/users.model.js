@@ -1,5 +1,5 @@
 const { DataTypes, Model } = require('sequelize');
-// const {Sequelize} = require('sequelize');
+const {Sequelize} = require('sequelize');
 
 const USER_TABLE = 'users';
 const UserSchema = {
@@ -31,13 +31,13 @@ const UserSchema = {
     type:DataTypes.STRING,
     field:'job_area',
 
-  }//,
-  // createdAt:{
-  //   allowNull:false,
-  //   type:DataTypes.DATE,
-  //   field:'create_at',
-  //   defaultValue:Sequelize.NOW
-  // }
+  },
+  createdAt:{
+    // allowNull:false,
+    type:DataTypes.DATE,
+    field:'created_at',
+    defaultValue:Sequelize.NOW
+  }
 };
 
 class User extends Model{

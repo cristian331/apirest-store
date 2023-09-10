@@ -1,4 +1,3 @@
-const { faker }  = require('@faker-js/faker');
 const boom = require('@hapi/boom');
 const pool = require('./../libs/postgres.pool');
 // const { models } = require('../libs/sequalize');
@@ -7,35 +6,12 @@ class ProductsService {
 
   constructor () {
     this.products = [];
-    this.generate();
     this.pool = pool;
     this.pool.on('error', (err) => console.error(err));
   }
 
-  generate() {
-    const limit = 100;
-    for (let index = 0; index < limit; index++) {
-      this.products.push({
-        id: faker.string.uuid().split('-')[0],
-        name: faker.commerce.productName(),
-        price: parseInt(faker.commerce.price()),
-        image: faker.image.url(),
-        isblock: faker.datatype.boolean() // EJM logica negocio - como ejercicio para manejo de errores
-      });
-    }
-    // return this.products
-  }
 
   async create(data) {
-    //------------------
-    // const newProduct = {
-    //   id: faker.string.uuid().split('-')[0],
-    //   ...data,
-    //   isblock: faker.datatype.boolean()
-    // }
-    // this.products.push(newProduct);
-    // return newProduct
-    //--------------------
     const query = `iNSERT INTO products (name, price, image, isblock) VALUES ('${data.name}',${data.price},'${data.image}','${data.isblock}');`;
     const queryId = 'SELECT id FROM products ORDER BY id DESC LIMIT 1';
     await this.pool.query(query);
@@ -44,12 +20,6 @@ class ProductsService {
     const rta = this.findOne(id);
     return rta;
   }
-
-  // async findDB() {
-  //   const client = await getConnection();
-  //   const rta = await client.query('SELECT * FROM products');
-  //   return rta.rows;
-  // }
 
   async find() {
     //--------------------
@@ -64,11 +34,9 @@ class ProductsService {
   }
 
   async findOne(id) {
-    // const product = this.products.find(item => item.id===id)
-    //--------------------
     const query = `SELECT * FROM products WHERE id = ${id}`;
-    const product = await this.pool.query(query)
-    // return product.rows[0];
+    const product = await this.pool.query(query);
+
     //-------------------
     if (!product.rows[0]) {
       // throw new Error('Product Not Found')
@@ -83,27 +51,33 @@ class ProductsService {
   }
 
   async update(id, changes) {
-    const i = this.products.findIndex(item => item.id === id)
-    const product = this.products[i];
-    if(i === -1) {
+    const q = `SELECT * FROM products WHERE id = ${id}`;
+    let product = (await this.pool.query(q)).rows[0];
+
+    if(!product) {
       // throw new Error('Product Not Found')
       throw boom.notFound('Product Not Found')
-    }
-    this.products[i] = {
+    };
+    const productUpdate = await {
       ...product,
       ...changes
     };
-    return this.products[i];
+    const query = `UPDATE products SET name='${productUpdate.name}', price=${productUpdate.price}, image='${productUpdate.image}', isblock='${productUpdate.isblock}' WHERE id=${id}`;
+    await this.pool.query(query);
+    return await productUpdate
   }
 
   async delete(id) {
-    const i = this.products.findIndex(item => item.id === id);
-      if(i === -1) {
-        // throw new Error('Product Not Found')
-          throw boom.notFound('Product Not Found')
-        }
-    const product = this.products.splice(i,1);
-    return product
+    const q = `SELECT * FROM products WHERE id = ${id}`;
+    const product = (await this.pool.query(q)).rows[0];
+
+    if(!product) {
+      // throw new Error('Product Not Found')
+      throw boom.notFound('Product Not Found')
+    };
+    const query = `DELETE FROM products WHERE id=${id}`
+    await this.pool.query(query);
+    return await product
   }
 }
 

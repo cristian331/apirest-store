@@ -1,74 +1,46 @@
-const { faker }  = require('@faker-js/faker');
 const boom = require('@hapi/boom');
-const sequelize = require('./../libs/sequelize');
+const { models } = require('../libs/sequelize');
 
 class CategoriesService {
 
   constructor () {
     this.categories = [];
-    this.generate();
-  }
-
-  generate() {
-    const limit = 60
-    for (let index = 0; index < limit; index++) {
-      this.categories.push({
-        id: index,
-        name: faker.commerce.department()
-      });
-    }
   }
 
   async create(data) {
-    const newCategory = {
-      id: this.categories.length,
-      ...data
-    };
-    this.categories.push(newCategory);
-    return newCategory
+    const newCateg = await models.Category.create(data);
+    return newCateg
   }
 
   async find() {
-
-    const query = 'SELECT * FROM categories'
-    const [data] = await sequelize.query(query);
-    return data
+    const rta = await models.Category.findAll();
+    return rta
+    // ----------------------
+    // const query = 'SELECT * FROM categories'
+    // const [data] = await sequelize.query(query);
+    // return data
     //------------------------
     // return this.categories
   }
 
   async findOne(id) {
-    const category = this.categories.find(item => item.id === id*1)
-    if(!category) {
-      // throw new Error('Category Not Found')
-      throw boom.notFound('Product Not Found')
-    }
-    return category
+   const category = await models.Category.findByPk(id);
+   if (!category) {
+    throw boom.notFound('Category Not Found');
+   }
+    return category.dataValues
   }
 
   async update(id, changes) {
-    const i = this.categories.findIndex(item => item.id === id*1)
-    const category = this.categories[i];
-
-    if(i === -1) {
-      // throw new Error('Category Not Found')
-      throw boom.notFound('Product Not Found')
-    }
-    this.categories[i] = {
-      ...category,
-      ...changes
-    };
-    return this.categories[i];
+    const category = await this.findOne(id);
+    const rta = await category.update(changes);
+    return rta
   }
 
   async delete(id) {
-    const i = this.categories.findIndex(item => item.id === id*1);
-    if(i === -1) {
-      // throw new Error('Category Not Found')
-      throw boom.notFound('Product Not Found')
-    }
-    const category = this.categories.splice(i,1);
-    return category
+    const category = await this.findOne(id);
+    await category.destroy();
+    return { id }
   }
 }
 

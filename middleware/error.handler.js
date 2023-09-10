@@ -1,4 +1,6 @@
-// ENVIAR LOS ERROS A LA CONSOLA
+const { ValidationError } = require('sequelize');
+
+// ENVIAR LOS ERRORS A LA CONSOLA
 function logErros (err, req, res, next) {
   console.log('logErros');
   console.error(err);
@@ -25,7 +27,17 @@ function boomErrorHandler (err, req, res, next) {
   }else {
     next(err);
   }
-
 }
 
-module.exports = { logErros, errorHandler, boomErrorHandler }
+function ormErrorHandler(err, req, res, next) {
+  if (err instanceof ValidationError) {
+    res.status(409).json({
+      statusCode: 409,
+      message: err.name,
+      errors: err.errors
+    })
+  }
+  next(err);
+}
+
+module.exports = { logErros, errorHandler, boomErrorHandler, ormErrorHandler }

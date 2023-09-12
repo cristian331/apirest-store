@@ -1,6 +1,6 @@
 const boom = require('@hapi/boom');
 const pool = require('./../libs/postgres.pool');
-// const { models } = require('../libs/sequalize');
+const { models } = require('../libs/sequelize');
 
 class ProductsService {
 
@@ -23,31 +23,36 @@ class ProductsService {
 
   async find() {
     //--------------------
-    // const rta = await models.Product.findAll();
-    // return rta
+    const rta = await models.Product.findAll({
+      include: ['category']
+    });
+    return rta
     // --------------------
-    const query = 'SELECT * FROM products';
-    const rta = await this.pool.query(query)
-    return rta.rows;
+    // const query = 'SELECT * FROM products';
+    // const rta = await this.pool.query(query)
+    // return rta.rows;
     // --------------------
     // return this.products
   }
 
   async findOne(id) {
-    const query = `SELECT * FROM products WHERE id = ${id}`;
-    const product = await this.pool.query(query);
-
+    const product= await models.Product.findByPk(id, {
+      include: ['category']
+    })
     //-------------------
-    if (!product.rows[0]) {
+    // const query = `SELECT * FROM products WHERE id = ${id}`;
+    // const product = await this.pool.query(query);
+    //--------------------
+    if (!product) {
       // throw new Error('Product Not Found')
       throw boom.notFound('Product Not Found')
     }
     // Validacion if block
-    if (product.rows[0].isblock) {
+    if (product.isblock) {
       throw boom.conflict('Product is block for You')
     }
     //------------------
-    return product.rows[0]
+    return product.dataValues
   }
 
   async update(id, changes) {

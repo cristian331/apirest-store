@@ -12,7 +12,7 @@ function routerApi (app) {
   router.use('/users',  usersRuoter);
   router.use('/products', productsRuoter);
   router.use('/categories', categoriesRuoter);
-  router.use('/ordes', ordersRuoter)
+  router.use('/orders', ordersRuoter)
 }
 
 module.exports = routerApi;

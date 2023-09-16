@@ -11,7 +11,6 @@ class ProductsService {
     this.pool.on('error', (err) => console.error(err));
   }
 
-
   async create(data) {
     const query = `iNSERT INTO products (name, price, image, isblock) VALUES ('${data.name}',${data.price},'${data.image}','${data.isblock}');`;
     const queryId = 'SELECT id FROM products ORDER BY id DESC LIMIT 1';
@@ -43,12 +42,12 @@ class ProductsService {
 
     const rta = await models.Product.findAll(options);
     return rta
-    // --------------------
-    // const query = 'SELECT * FROM products';
-    // const rta = await this.pool.query(query)
-    // return rta.rows;
-    // --------------------
-    // return this.products
+    /* --------------------
+    const query = 'SELECT * FROM products';
+    const rta = await this.pool.query(query)
+    return rta.rows;
+    --------------------
+    return this.products*/
   }
 
   async findOne(id) {
@@ -65,7 +64,8 @@ class ProductsService {
     }
     // Validacion if block
     if (product.isblock) {
-      throw boom.conflict('Product is block for You')
+      return product.dataValues
+      // throw boom.conflict('Product is block for You')
     }
     //------------------
     return product.dataValues

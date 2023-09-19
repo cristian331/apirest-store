@@ -23,6 +23,8 @@ app.use(express.json());
 // app.use(cors(option));
 app.use(cors());
 
+require('./utils/auth');
+
 routerApi(app);
 
 //Nota: se deben declarar despues de ejecutar la funcion del router.

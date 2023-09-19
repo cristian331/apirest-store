@@ -229,4 +229,7 @@ postgres_data
 consultas_postgres
 postgres.js
 
+#pruebas de librerias
+pruebas
+
 # End of https://www.toptal.com/developers/gitignore/api/node,windows,linux,macos

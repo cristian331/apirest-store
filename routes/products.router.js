@@ -2,9 +2,12 @@ const express = require("express");
 const ProductsService = require("../services/products.service");
 const validatorHandler = require("./../middleware/validator.handler");
 const { createProductSchema,
-  updateProductSchema,
-  getProductSchema,
-  queryProductSchema } = require("./../schemas/products.schema");
+        updateProductSchema,
+        getProductSchema,
+        queryProductSchema } = require("./../schemas/products.schema");
+
+const passport = require('passport');
+
 
 const router = express.Router();
 const service = new ProductsService();
@@ -42,7 +45,8 @@ router.get('/:id',
 );
 
 router.post('/',
-validatorHandler(createProductSchema, 'body'),
+  passport.authenticate('jwt', {session: false}),
+  validatorHandler(createProductSchema, 'body'),
   async (req, res, next) => {
     try {
       const body = req.body;

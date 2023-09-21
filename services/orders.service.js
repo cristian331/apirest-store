@@ -16,6 +16,16 @@ class OrderService {
 		return newOrder;
 	}
 
+  async findByUser(userId) {
+    const orders = await models.Order.findAll({
+      where: {
+        '$user.id$': userId
+      },
+      include: ['user', 'items']
+    })
+		return orders;
+	}
+
 	async find() {
 		return [];
 	}

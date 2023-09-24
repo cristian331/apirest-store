@@ -9,7 +9,7 @@ const service = new UserService();
 
 class AuthService {
 
-  async getUser(email, password) {
+  async getUser (email, password) {
     const user = await service.findByEmail(email);
     if (!user) {
       throw boom.unauthorized();
@@ -22,7 +22,7 @@ class AuthService {
     return user;
   }
 
-  signToken(user) {
+  signToken (user) {
     const payload = {
       sub: user.id,
       role: user.role
@@ -34,11 +34,26 @@ class AuthService {
     };
   }
 
-  async sendMail(email) {
+  async sendRecovery (email) {
     const user = await service.findByEmail(email);
     if (!user) {
       throw boom.unauthorized();
+    };
+    const payload = { sub: user.id };
+    const token = jwt.sign(payload, config.jwtSecret);
+    await service.update(user.id, {recoveryToken: token});
+    const link = `http://myapp.com/recovery?token=${token}`;
+
+    const mail = {
+      from: config.tastEmail, // sender address
+      to: `${user.email}`, // list of receivers
+      subject: "Recuperar contraseña", // Subject line
+      html: `<b>Ingresa al siguiente link => ${link}</b>`, // html body
     }
+    return await this.sendMail(mail);
+  }
+
+  async sendMail (infoMail) {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       secure: true, // true for 465, false for other ports
@@ -48,15 +63,27 @@ class AuthService {
         pass: config.passEmail
       }
     });
-    await transporter.sendMail({
-      from: config.tastEmail, // sender address
-      to: `${user.email}`, // list of receivers
-      subject: "Este es un nuevo correo", // Subject line
-      text: "Hola santi", // plain text body
-      html: "<b>Hola santi</b>", // html body
-    });
+    await transporter.sendMail(infoMail)
     return { message: 'mail has been sent' };
-  }
+  };
+
+
+  async changePassword (token, newPassword) {
+    try {
+      const payload = jwt.verify(token, config.jwtSecret);
+      const user = await service.findOne(payload.sub);
+
+      if (user.recoveryToken !== token) {
+        throw boom.unauthorized();
+      };
+
+      const hash = await bcrypt.hash(newPassword, 10);
+      await service.update(user.id, {password: hash, recoveryToken: null});
+      return {message: 'Password has been change'};
+    } catch (error) {
+      throw boom.unauthorized();
+    }
+  };
 }
 
 module.exports = AuthService;

@@ -20,7 +20,12 @@ const UserSchema = {
   },
   password:{
     allowNull:false,
-    type:DataTypes.STRING
+    type:DataTypes.STRING,
+  },
+  recoveryToken:{
+    allowNull:true,
+    type:DataTypes.STRING,
+    field:'recovery_token',
   },
   gender: {
     allowNull:false,
@@ -30,7 +35,6 @@ const UserSchema = {
     allowNull:false,
     type:DataTypes.STRING,
     field:'job_area',
-
   },
   createdAt:{
     // allowNull:false,

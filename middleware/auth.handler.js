@@ -9,5 +9,17 @@ function checkApiKey (req,res,next) {
     next(boom.unauthorized()
     );
   }
+};
+
+// debe implementarse despues de validar el token, el cual, devuelve el payload 'user'
+function checkRoles (...roles) {
+  return (req, res, next) => { // closure
+    const user = req.user;
+    if (roles.includes(user.role)) {
+      next()
+    } else {
+      boom.unauthorized(`Don't have permision for this action`)
+    }
+  }
 }
-module.exports={ checkApiKey }
+module.exports={ checkApiKey, checkRoles }

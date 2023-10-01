@@ -10,7 +10,7 @@ const config = {
   dbPort: process.env.DB_PORT,
   apiKey: process.env.API_KEY,
   jwtSecret: process.env.JWT_SECRET,
-  tastEmail: process.env.TAST_EMAIL,
+  testEmail: process.env.TEST_EMAIL,
   passEmail: process.env.PASS_EMAIL
 
 };

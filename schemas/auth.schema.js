@@ -6,7 +6,7 @@ const token = Joi.string().alphanum().min(10);
 
 
 const changePasswordSchema = Joi.object ({
-  token: token.replace(),
+  token: token.required(),
   password: password.required()
 });
 

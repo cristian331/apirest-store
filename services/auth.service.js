@@ -9,6 +9,7 @@ const service = new UserService();
 
 class AuthService {
 
+  // para verificar que existan email y password corresponda para permitir hacer el 'log-in'
   async getUser (email, password) {
     const user = await service.findByEmail(email);
     if (!user) {
@@ -20,7 +21,7 @@ class AuthService {
     }
     delete user.dataValues.password;
     return user;
-  }
+  };
 
   signToken (user) {
     const payload = {
@@ -31,8 +32,8 @@ class AuthService {
     return {
       user,
       token
-    };
-  }
+    }
+  };
 
   async sendRecovery (email) {
     const user = await service.findByEmail(email);
@@ -42,16 +43,16 @@ class AuthService {
     const payload = { sub: user.id };
     const token = jwt.sign(payload, config.jwtSecret);
     await service.update(user.id, {recoveryToken: token});
-    const link = `http://myapp.com/recovery?token=${token}`;
+    const link = `http://frontend-app.com/recovery?token=${token}`;
 
     const mail = {
-      from: config.tastEmail, // sender address
+      from: config.testEmail, // sender address
       to: `${user.email}`, // list of receivers
       subject: "Recuperar contraseña", // Subject line
       html: `<b>Ingresa al siguiente link => ${link}</b>`, // html body
     }
     return await this.sendMail(mail);
-  }
+  };
 
   async sendMail (infoMail) {
     const transporter = nodemailer.createTransport({
@@ -59,14 +60,13 @@ class AuthService {
       secure: true, // true for 465, false for other ports
       port: 465,
       auth: {
-        user: config.tastEmail,
+        user: config.testEmail,
         pass: config.passEmail
       }
     });
     await transporter.sendMail(infoMail)
     return { message: 'mail has been sent' };
   };
-
 
   async changePassword (token, newPassword) {
     try {
